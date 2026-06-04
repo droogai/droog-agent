@@ -1,0 +1,32 @@
+/*
+ * Droog Chatbot — Admin styles
+ * Scoped to #droog-chatbot-settings to avoid bleeding into WP admin globally.
+ */
+
+#droog-chatbot-settings h1 {
+	margin-bottom: 16px;
+}
+
+#droog-chatbot-settings .droog-notice-info {
+	margin: 0 0 20px;
+	padding: 10px 14px;
+}
+
+#droog-chatbot-settings .form-table th {
+	width: 200px;
+}
+
+#droog-chatbot-settings input[type="color"] {
+	height: 36px;
+	width: 56px;
+	padding: 2px 4px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+#droog-chatbot-settings input[type="color"] + .description {
+	vertical-align: middle;
+	margin-left: 8px;
+}
