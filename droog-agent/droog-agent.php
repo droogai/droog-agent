@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Droog Agent
- * Plugin URI:  https://droog.io/wordpress-plugin
+ * Plugin URI:  https://www.droog.io/wp-plugin
  * Description: Add your Droog AI agent to your WordPress site in seconds. No coding required.
  * Version:     1.0.0
  * Author:      Droog

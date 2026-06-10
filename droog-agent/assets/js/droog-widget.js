@@ -8,6 +8,7 @@
  *           data-header-text="#ffffff" data-footer-bg="#f9fafb"
  *           data-position="bottom-right|bottom-left|google-centered"
  *           data-prompts='["Question one?","Question two?"]'
+ *           data-hide-powered-by="true|false"
  *           async></script>
  *
  * Session flow:
@@ -40,6 +41,8 @@
   var PROMPTS     = (function () {
     try { return JSON.parse(tag.getAttribute('data-prompts') || '[]'); } catch (e) { return []; }
   }());
+  var HIDE_POWERED_BY = tag.getAttribute('data-hide-powered-by') === 'true';
+  var BOT_INITIALS = BOT_NAME.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').slice(0, 2).toUpperCase();
   var API_BASE    = 'https://api.droog.io';
 
   if (!BOT_ID || !TENANT_ID) return;
@@ -93,6 +96,7 @@
     lastChatTime     = null;
     pendingRating    = false;
     if (statusEl) statusEl.textContent = 'Online';
+    if (timerBadgeEl) timerBadgeEl.style.display = 'none';
     var rc = doc.getElementById('droog-rating-card');
     if (rc) rc.remove();
   }
@@ -179,12 +183,14 @@
     // Header
     '.dc-header{',
       'background:' + HEADER_BG + ';color:' + HEADER_TXT + ';',
-      'padding:14px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;',
+      'padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;',
+      'box-shadow:0 1px 0 rgba(0,0,0,.08);',
     '}',
-    '.dc-avatar{width:32px;height:32px;border-radius:50%;background:rgba(128,128,128,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}',
-    '.dc-info{flex:1;min-width:0}',
-    '.dc-name{font-weight:600;font-size:15px}',
-    '.dc-status{font-size:11px;opacity:.7}',
+    '.dc-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;font-size:14px;color:' + HEADER_TXT + ';letter-spacing:.5px}',
+    '.dc-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}',
+    '.dc-name{font-weight:700;font-size:14px}',
+    '.dc-status{font-size:11px;opacity:.75}',
+    '.dc-timer-badge{display:none;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:#fff;margin-top:3px}',
 
     // Three-dots menu
     '.dc-menu-wrap{position:relative;flex-shrink:0}',
@@ -231,8 +237,7 @@
     '.dc-row.bot{align-self:flex-start}',
     '.dc-row.usr{align-self:flex-end;flex-direction:row-reverse}',
 
-    '.dc-row-avatar{width:28px;height:28px;border-radius:50%;background:' + COLOR + ';',
-      'color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}',
+    '.dc-row-avatar{width:28px;height:28px;border-radius:50%;background:' + COLOR + ';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700}',
 
     '.dc-bubble{padding:10px 14px;border-radius:16px;word-break:break-word}',
     '.bot .dc-bubble{background:#f3f4f6;color:#111827;border-bottom-left-radius:4px}',
@@ -295,15 +300,15 @@
     '.dc-sources a{color:' + COLOR + ';text-decoration:none}',
     '.dc-sources a:hover{text-decoration:underline}',
 
-    // Input area
-    '.dc-input-wrap{border-top:1px solid #e5e7eb;padding:12px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:' + FOOTER_BG + '}',
-    '.dc-textarea{flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:9px 12px;',
+    // Input area — integrated pill with send button inside
+    '.dc-input-wrap{border-top:1px solid #e5e7eb;padding:10px 14px;display:flex;flex-shrink:0;background:#fff}',
+    '.dc-input-inner{flex:1;display:flex;align-items:center;gap:6px;border:1.5px solid #e5e7eb;border-radius:24px;padding:5px 5px 5px 14px;background:#fff;transition:border-color .15s}',
+    '.dc-input-inner:focus-within{border-color:' + COLOR + '}',
+    '.dc-textarea{flex:1;border:none;outline:none;background:none;',
       'font-size:14px;font-family:inherit;line-height:1.4;resize:none;',
-      'min-height:40px;max-height:120px;outline:none;transition:border-color .15s;',
-      'color:#111827;background:#fff}',
-    '.dc-textarea:focus{border-color:' + COLOR + '}',
+      'min-height:28px;max-height:96px;color:#111827;padding:0}',
     '.dc-textarea::placeholder{color:#9ca3af}',
-    '.dc-send{width:40px;height:40px;border-radius:10px;background:' + COLOR + ';',
+    '.dc-send{width:30px;height:30px;border-radius:50%;background:' + COLOR + ';',
       'border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;',
       'flex-shrink:0;transition:filter .15s,transform .1s;color:#fff}',
     '.dc-send:hover{filter:brightness(1.1)}',
@@ -383,10 +388,11 @@
   panel.setAttribute('aria-label', esc(BOT_NAME) + ' Chat');
   panel.innerHTML =
     '<div class="dc-header">' +
-      '<div class="dc-avatar">' + SVG_USER + '</div>' +
+      '<div class="dc-avatar">' + esc(BOT_INITIALS) + '</div>' +
       '<div class="dc-info">' +
         '<div class="dc-name">' + esc(BOT_NAME) + '</div>' +
         '<div class="dc-status">Online</div>' +
+        '<span class="dc-timer-badge" id="droog-timer-badge"></span>' +
       '</div>' +
       '<div class="dc-menu-wrap">' +
         '<button class="dc-menu-btn" id="droog-menu-btn" ' +
@@ -401,20 +407,23 @@
     '</div>' +
     '<div class="dc-msgs" id="droog-msgs" aria-live="polite" aria-label="Chat messages" role="log"></div>' +
     '<div class="dc-input-wrap">' +
-      '<textarea class="dc-textarea" id="droog-ta" placeholder="Ask anything…" rows="1" aria-label="Type a message"></textarea>' +
-      '<button class="dc-send" id="droog-send" aria-label="Send" disabled>' + SVG_SEND + '</button>' +
+      '<div class="dc-input-inner">' +
+        '<textarea class="dc-textarea" id="droog-ta" placeholder="Ask anything…" rows="1" aria-label="Type a message"></textarea>' +
+        '<button class="dc-send" id="droog-send" aria-label="Send" disabled>' + SVG_SEND + '</button>' +
+      '</div>' +
     '</div>' +
-    '<div class="dc-footer"><a href="https://droog.io" target="_blank" rel="noopener">Powered by Droog</a></div>';
+    (HIDE_POWERED_BY ? '' : '<div class="dc-footer"><a href="https://droog.io" target="_blank" rel="noopener">Powered by Droog</a></div>');
   doc.body.appendChild(panel);
 
   // ─── Element refs ─────────────────────────────────────────────────────────
 
-  var msgsEl   = doc.getElementById('droog-msgs');
-  var taEl     = doc.getElementById('droog-ta');
-  var sendEl   = doc.getElementById('droog-send');
-  var menuBtn  = doc.getElementById('droog-menu-btn');
-  var menuDrop = doc.getElementById('droog-menu-dropdown');
-  var statusEl = panel.querySelector('.dc-status');
+  var msgsEl       = doc.getElementById('droog-msgs');
+  var taEl         = doc.getElementById('droog-ta');
+  var sendEl       = doc.getElementById('droog-send');
+  var menuBtn      = doc.getElementById('droog-menu-btn');
+  var menuDrop     = doc.getElementById('droog-menu-dropdown');
+  var statusEl     = panel.querySelector('.dc-status');
+  var timerBadgeEl = doc.getElementById('droog-timer-badge');
   var badge    = launcher ? launcher.querySelector('.droog-badge')    : null;
   var chatIcon = launcher ? launcher.querySelector('.droog-chat-icon'): null;
   var xIcon    = launcher ? launcher.querySelector('.droog-x-icon')   : null;
@@ -535,7 +544,7 @@
   function makeAvatarDiv() {
     var d = doc.createElement('div');
     d.className = 'dc-row-avatar';
-    d.innerHTML = SVG_USER;
+    d.textContent = BOT_INITIALS[0];
     return d;
   }
 
@@ -711,11 +720,17 @@
   // ─── Countdown timer ──────────────────────────────────────────────────────
 
   function updateStatusDisplay(seconds) {
-    if (!statusEl) return;
-    if (seconds <= 0) { statusEl.textContent = 'Session ended'; return; }
+    if (seconds <= 0) {
+      if (timerBadgeEl) timerBadgeEl.style.display = 'none';
+      if (statusEl) statusEl.textContent = 'Session ended';
+      return;
+    }
     var m = Math.floor(seconds / 60);
     var s = seconds % 60;
-    statusEl.textContent = m + ':' + (s < 10 ? '0' : '') + s + ' remaining';
+    if (timerBadgeEl) {
+      timerBadgeEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      timerBadgeEl.style.display = 'inline-block';
+    }
   }
 
   function stopCountdown() {

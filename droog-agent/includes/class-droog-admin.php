@@ -51,6 +51,7 @@ class Droog_Admin {
 		add_settings_field( 'header_bg_color',    __( 'Header Background', 'droog-agent' ),     array( $this, 'field_header_bg_color' ),    self::MENU_SLUG, 'droog_chatbot_appearance' );
 		add_settings_field( 'header_text_color',  __( 'Header Text Color', 'droog-agent' ),     array( $this, 'field_header_text_color' ),  self::MENU_SLUG, 'droog_chatbot_appearance' );
 		add_settings_field( 'footer_bg_color',    __( 'Footer Background', 'droog-agent' ),     array( $this, 'field_footer_bg_color' ),    self::MENU_SLUG, 'droog_chatbot_appearance' );
+		add_settings_field( 'show_powered_by',   __( 'Powered by Droog', 'droog-agent' ),      array( $this, 'field_show_powered_by' ),    self::MENU_SLUG, 'droog_chatbot_appearance' );
 	}
 
 	// ---------------------------------------------------------------------------
@@ -110,6 +111,9 @@ class Droog_Admin {
 
 		// enable_on_all_pages
 		$clean['enable_on_all_pages'] = ! empty( $raw['enable_on_all_pages'] );
+
+		// show_powered_by
+		$clean['show_powered_by'] = ! empty( $raw['show_powered_by'] );
 
 		// Color fields — shared hex validator
 		foreach ( array( 'primary_color', 'header_bg_color', 'header_text_color', 'footer_bg_color' ) as $field ) {
@@ -249,7 +253,20 @@ class Droog_Admin {
 		<input type="color" id="droog_footer_bg_color"
 			name="<?php echo esc_attr( self::OPTION_KEY ); ?>[footer_bg_color]"
 			value="<?php echo esc_attr( $s['footer_bg_color'] ); ?>" />
-		<span class="description"><?php esc_html_e( 'Chat panel input area and "Powered by" footer background. Default: #f9fafb.', 'droog-agent' ); ?></span>
+		<span class="description"><?php esc_html_e( '"Powered by Droog" footer background (when attribution is enabled). Default: #f9fafb.', 'droog-agent' ); ?></span>
+		<?php
+	}
+
+	public function field_show_powered_by() {
+		$s = self::get_settings();
+		?>
+		<label for="droog_show_powered_by">
+			<input type="checkbox" id="droog_show_powered_by"
+				name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_powered_by]"
+				value="1" <?php checked( $s['show_powered_by'] ); ?> />
+			<?php esc_html_e( "Show 'Powered by Droog' in chat widget.", 'droog-agent' ); ?>
+		</label>
+		<p class="description"><?php esc_html_e( 'When checked, the chat panel footer displays a "Powered by Droog" attribution.', 'droog-agent' ); ?></p>
 		<?php
 	}
 
@@ -292,6 +309,7 @@ class Droog_Admin {
 			'header_bg_color'     => '#6366f1',
 			'header_text_color'   => '#ffffff',
 			'footer_bg_color'     => '#f9fafb',
+			'show_powered_by'     => false,
 		);
 	}
 

@@ -2,7 +2,7 @@
 Contributors: droogtech
 Author: Droog Technologies Private Limited
 Author URI: https://droog.io
-Tags: ai agent, conversational ai, droog, rag, intelligent assistant
+Tags: ai chatbot, chatbot, live chat, ai assistant, customer support
 Requires at least: 5.8
 Tested up to: 7.0
 Stable tag: 1.0.0
@@ -11,37 +11,34 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The future of Conversational Intelligence — add your Droog AI agent to any WordPress site in minutes. No coding required.
+Add an AI-powered chat assistant to your WordPress site in minutes. No coding required.
 
 == Description ==
 
-**Droog Agent** connects your WordPress site to the [Droog](https://droog.io) platform — a Retrieval-Augmented Generation (RAG) conversational intelligence SaaS that lets you build, train, and deploy intelligent agents trained on your own content.
+**Droog Agent** lets you add a smart AI chat assistant to your WordPress site — one that actually knows your business, answers visitor questions, and works around the clock.
 
-Upload your documents or web URLs to a knowledge base, publish your assistant, and embed it on your site — all without writing a single line of code.
-
-This plugin handles the embed step for you: it securely stores your Droog credentials and injects the assistant widget into your WordPress site's footer automatically.
+You train the assistant on your own content (documents, web pages, FAQs), publish it on the Droog platform, and this plugin handles placing it on your site automatically.
 
 **How it works:**
 
-1. Sign up at [app.droog.io](https://app.droog.io) — accounts start on a free Trial plan.
-2. Click **Create Agent** and configure your assistant's identity, voice, and knowledge base.
-3. Upload your content (PDF, DOCX, Word, web URLs, sitemaps) and wait for indexing to complete.
-4. Click **Publish**, then open the **Deploy** tab to retrieve your **Tenant ID** and **Agent ID**.
-5. Paste both IDs into this plugin's settings page — your assistant appears on every page instantly.
+1. Sign up at [app.droog.io](https://app.droog.io) — free to get started.
+2. Create your assistant and give it a name and personality.
+3. Upload your content — PDFs, Word documents, web pages, or sitemaps.
+4. Publish your assistant and copy your **Tenant ID** and **Agent ID** from the settings tab.
+5. Paste both IDs into this plugin's settings page — your assistant goes live instantly.
 
-For a step-by-step walkthrough see the [Droog Quickstart Guide](https://documentation.droog.io/quickstart#registration).
+For a full walkthrough, see the [Droog Quickstart Guide](https://documentation.droog.io/quickstart#registration).
 
 **Features:**
 
-* Two-field setup — paste your Tenant ID and Agent ID from the Droog Deploy tab.
-* Set a custom display name shown in the assistant's chat header.
-* Three launcher positions: **Bottom Right**, **Bottom Left**, or **Google-Centered** (inline search bar).
-* Add animated typewriter prompts to the Google-Centered search bar.
-* Full color customisation: accent color, header background, header text, and input area background.
-* Toggle the widget on or off across your entire site with one checkbox.
-* Use the `[droog_search_bar]` shortcode to place an inline search bar anywhere on a page (requires Google-Centered position mode).
-* Zero performance overhead — the widget script loads asynchronously.
-* Security-first: only your Tenant ID and Agent ID are stored; the `<script>` tag is constructed server-side using `esc_attr()`.
+* Quick setup — just paste your Tenant ID and Agent ID and you're done.
+* Set a custom display name for your assistant.
+* Choose where the chat button appears: **Bottom Right**, **Bottom Left**, or as an **inline search bar** on any page.
+* Add sample questions to the search bar to guide visitors.
+* Customise colors to match your brand.
+* Turn the widget on or off with a single checkbox — no need to touch any settings.
+* Place an inline search bar anywhere using the `[droog_search_bar]` shortcode.
+* Loads asynchronously — no impact on your page speed.
 
 == Installation ==
 
@@ -49,70 +46,74 @@ For a step-by-step walkthrough see the [Droog Quickstart Guide](https://document
 2. Activate the plugin through the **Plugins** menu in WordPress Admin.
 3. Go to **Droog Agent** in the left-hand admin menu.
 4. Enter your **Tenant ID** and **Agent ID** (see FAQ below for where to find these).
-5. Click **Save Settings** — your assistant is now live on the frontend.
+5. Click **Save Settings** — your assistant is now live on your site.
 
 == Frequently Asked Questions ==
 
 = Where do I find my Tenant ID and Agent ID? =
 
-Log in to [app.droog.io](https://app.droog.io), open your published assistant, and go to the **Settings** tab.
-
-Your embed snippet will look like this:
-
-`<script src="https://api.droog.io/embed/YOUR-TENANT-ID/YOUR-AGENT-ID.js"></script>`
-
-* **Tenant ID** — the long UUID segment in the URL (e.g. `4e47xxxx-fexx-44xx-90xx-xxxxxxxedb88`)
-* **Agent ID** — the identifier after the slash (e.g. `bot-id-fac10xxxxxxx`)
-
-Copy each value separately and paste them into the corresponding fields on the plugin settings page.
+Log in to [app.droog.io](https://app.droog.io), open your published assistant, and go to the **Deploy** tab. You will see your Tenant ID and Agent ID listed there — copy each one and paste them into the corresponding fields on the plugin settings page.
 
 = Do I need a Droog account? =
 
-Yes. Create a free account at [app.droog.io](https://app.droog.io). New accounts start on a Trial plan. See the [Droog Quickstart Guide](https://documentation.droog.io/quickstart#registration) for full onboarding steps.
+Yes. You can create a account at [app.droog.io](https://app.droog.io). New accounts start on a free Trial plan with no credit card required. See the [Droog Quickstart Guide](https://documentation.droog.io/quickstart#registration) for step-by-step instructions.
 
-= What content can I add to my assistant's knowledge base? =
+= What content can I upload to train my assistant? =
 
-Droog supports PDF, DOCX, TXT, Markdown, HTML, web URLs, and sitemaps. After uploading, wait for all documents to show a `completed` status before publishing.
+Droog supports PDF, Word (DOCX), plain text, Markdown, HTML, web page URLs, and sitemaps. After uploading, wait for all documents to show a green "completed" status before publishing your assistant.
 
-= What is the Google-Centered position mode? =
+= What is the inline search bar mode? =
 
-This mode replaces the floating launcher with an inline search bar that mounts inside any element you place the `[droog_search_bar]` shortcode in. It also supports animated typewriter prompts. Ideal for landing pages or search-first layouts.
+Instead of a floating chat button, your assistant appears as a search bar embedded directly on the page. You can place it anywhere using the `[droog_search_bar]` shortcode, and add example questions that cycle through with a typewriter animation. Great for landing pages or help centres.
 
-= Will this slow down my site? =
+= Will this slow down my website? =
 
-No. The widget script is loaded with the `async` attribute, so it never blocks page rendering.
+No. The widget loads in the background after your page content has already appeared, so your page speed scores are not affected.
 
-= Can I show the widget only on certain pages? =
+= Can I show the widget on only some pages? =
 
-Per-page targeting is not available in v1.0. The widget is either shown on all pages or disabled entirely. Granular page targeting is planned for a future release.
+Not in v1.0 — the widget is either shown on all pages or hidden entirely. Per-page control is planned for a future release.
 
-= How do I hide the widget without deleting my settings? =
+= How do I temporarily hide the widget without losing my settings? =
 
-Uncheck **Enable on All Pages** on the settings page and save. The script will not be injected until you re-enable it.
+Uncheck **Enable on All Pages** on the settings page and save. The assistant will disappear from your site until you turn it back on.
+
+== External Services ==
+
+This plugin connects to the Droog platform to power the AI chat assistant on your website.
+
+**What the service is:** Droog is a third-party AI assistant service that lets you create and deploy intelligent chat assistants trained on your own content.
+
+**What data is sent:** When visitors interact with the chat widget, their messages and session information are sent to Droog's servers to generate responses. No script files are loaded from external servers — the widget code is bundled directly within this plugin.
+
+**When data is sent:** Data is transmitted when:
+– The chat widget loads on your pages
+– A visitor sends a message through the chat interface
+– The AI generates a response
+
+**Account required:** Yes — a free Droog account is needed at [app.droog.io](https://app.droog.io).
+
+**Service links:**
+– Terms of Service & Privacy Policy: https://www.droog.io/legal
 
 == Screenshots ==
 
 1. The Droog Agent settings page — enter your Tenant ID, Agent ID, display name, and appearance options.
 2. The floating assistant launcher in the bottom-right corner of a live site.
-3. The assistant chat panel open, showing a conversation with RAG-powered answers and source citations.
-4. Google-Centered mode — an inline search bar with animated typewriter prompts embedded in a page via the `[droog_search_bar]` shortcode.
+3. The assistant chat panel open, showing a conversation with answers drawn from your content.
+4. Inline search bar mode — embedded in a page using the `[droog_search_bar]` shortcode, with animated example questions.
 
 == Changelog ==
 
 = 1.0.0 =
 * Initial release.
-* Settings page with Tenant ID, Agent ID, assistant display name, launcher position, animated prompts, and enable/disable toggle.
-* Full appearance customisation: accent color, header background, header text color, and input area background.
-* Three launcher positions: bottom-right, bottom-left, and google-centered.
-* `[droog_search_bar]` shortcode for inline search bar placement in google-centered mode.
-* Secure server-side script tag construction using `esc_attr()`.
-* Async widget script injection via `wp_footer` at priority 99.
+* Settings page with Tenant ID, Agent ID, assistant name, launcher position, and enable/disable toggle.
+* Full color customisation: accent color, header background, header text, and input area background.
+* Three launcher positions: bottom-right, bottom-left, and inline search bar.
+* `[droog_search_bar]` shortcode for placing the search bar anywhere on a page.
+
 
 == Upgrade Notice ==
-All upgrade are managed my droogtech
 
-== Reviews ==
-
-If you find Droog Agent useful, please consider leaving a review on the [WordPress.org plugin page](https://wordpress.org/support/plugin/droog-agent/reviews/#new-post). Your feedback helps us improve the plugin and lets other site owners discover it.
-
-We read every review and respond to questions and issues — your experience matters to us.
+= 1.0.0 =
+Initial release — no upgrade steps required.

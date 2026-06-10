@@ -3,8 +3,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Droog_Widget {
 
+	/** Holds data-* attrs for script_loader_tag filter. */
+	private $widget_data = array();
+
 	public function init() {
-		add_action( 'wp_footer', array( $this, 'inject_widget_script' ), 99 );
+		add_action( 'wp_enqueue_scripts',  array( $this, 'enqueue_widget_script' ) );
+		add_filter( 'script_loader_tag',   array( $this, 'add_widget_data_attrs' ), 10, 3 );
 		add_shortcode( 'droog_search_bar', array( $this, 'render_search_bar_shortcode' ) );
 	}
 
@@ -25,7 +29,7 @@ class Droog_Widget {
 		return '<div id="droog-search-bar-anchor" class="droog-search-bar-wrap"></div>';
 	}
 
-	public function inject_widget_script() {
+	public function enqueue_widget_script() {
 		$settings = Droog_Admin::get_settings();
 
 		if ( empty( $settings['bot_widget_id'] ) || empty( $settings['tenant_id'] ) ) {
@@ -44,22 +48,45 @@ class Droog_Widget {
 		// Prompts array serialized to JSON for the typewriter animation.
 		$prompts_json = wp_json_encode( array_values( $settings['prompts'] ) );
 
-		// Output is constructed server-side from stored scalar values — no raw
-		// script content is ever stored or echoed.
-		?>
-<script
-  src="https://droog-widget-assets.s3.ap-south-1.amazonaws.com/droog-widget.js"
-  data-bot-id="<?php echo esc_attr( $settings['bot_widget_id'] ); ?>"
-  data-tenant-id="<?php echo esc_attr( $settings['tenant_id'] ); ?>"
-  data-bot-name="<?php echo esc_attr( $settings['bot_name'] ); ?>"
-  data-primary-color="<?php echo esc_attr( $settings['primary_color'] ); ?>"
-  data-header-bg="<?php echo esc_attr( $header_bg ); ?>"
-  data-header-text="<?php echo esc_attr( $settings['header_text_color'] ); ?>"
-  data-footer-bg="<?php echo esc_attr( $settings['footer_bg_color'] ); ?>"
-  data-position="<?php echo esc_attr( $settings['launcher_position'] ); ?>"
-  data-prompts="<?php echo esc_attr( $prompts_json ); ?>"
-  async
-></script>
-		<?php
+		// Store attrs so script_loader_tag filter can inject them.
+		$this->widget_data = array(
+			'data-bot-id'         => $settings['bot_widget_id'],
+			'data-tenant-id'      => $settings['tenant_id'],
+			'data-bot-name'       => $settings['bot_name'],
+			'data-primary-color'  => $settings['primary_color'],
+			'data-header-bg'      => $header_bg,
+			'data-header-text'    => $settings['header_text_color'],
+			'data-footer-bg'      => $settings['footer_bg_color'],
+			'data-position'       => $settings['launcher_position'],
+			'data-prompts'        => $prompts_json,
+			'data-hide-powered-by' => $settings['show_powered_by'] ? 'false' : 'true',
+		);
+
+		wp_enqueue_script(
+			'droog-widget',
+			DROOG_CHATBOT_PLUGIN_URL . 'assets/js/droog-widget.js',
+			array(),
+			DROOG_CHATBOT_VERSION,
+			true  // load in footer
+		);
+	}
+
+	/**
+	 * Injects data-* attributes onto the droog-widget script tag.
+	 * wp_enqueue_script does not natively support arbitrary HTML attributes,
+	 * so this filter appends them after the src attribute.
+	 */
+	public function add_widget_data_attrs( $tag, $handle, $src ) {
+		if ( 'droog-widget' !== $handle || empty( $this->widget_data ) ) {
+			return $tag;
+		}
+
+		$extra = '';
+		foreach ( $this->widget_data as $attr => $value ) {
+			$extra .= ' ' . $attr . '="' . esc_attr( $value ) . '"';
+		}
+
+		// Insert attrs before the closing > of the opening <script tag.
+		return str_replace( ' src=', $extra . ' src=', $tag );
 	}
 }
